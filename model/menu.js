@@ -19,6 +19,16 @@ const menuSchema = new Schema({
 }, {timestamp: true})
 
 
+menuSchema.statics.findFood =async function(name){
+    try {
+        const food = await this.model('menu').findOne({name: name});
+        if(!food) return false;
+        return food; 
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 menuSchema.methods.addFood = async function(){
     try{
         const exist = await  this.model("menu").findOne({name: this.name})
