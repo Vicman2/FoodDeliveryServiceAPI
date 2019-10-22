@@ -14,6 +14,7 @@ router.delete('/remove-from-cart', validationMiddleware.validateFoodName, authMi
 router.put('/change-quantity', validationMiddleware.quantityChange, authMiddleware.checkUser, userController.changeQuantity);
 router.get('/view-cart', authMiddleware.checkUser, userController.viewCart);
 
+
 // routes for admin
 router.put("/make-admin", validationMiddleware.validateEmail, authMiddleware.checkAdmin, userController.makeAdmin);
 router.put("/unmake-admin", validationMiddleware.validateEmail, authMiddleware.checkAdmin, userController.unmakeAdmin);

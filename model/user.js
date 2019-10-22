@@ -42,58 +42,39 @@ const userSchema = new Schema({
 
 
 userSchema.methods.signUp= async function(){
-    try{
         const userExists = await this.model('user').findOne({email: this.email});
         if(userExists) return false;
         const hashedPassword = await bcrypt.hash(this.password,12);
         this.password = hashedPassword;
-        console.log(this)
         const saved = await this.save();
-        console.log(saved)
         return true
-    }catch(err){
-        console.log(err);
-    }
 }
 
 userSchema.statics.logIn = async function(email, password){
-    try{
         const userExists = await this.model('user').findOne({email: email});
         if(!userExists) return {message: "no User with this email", success: false}
         const checkValidPassword = await bcrypt.compare(password, userExists.password);
         if(!checkValidPassword) return {message:"Invalid password", status: false};
-        const token = JWT.sign({email:userExists.email, isAdmin: userExists.isAdmin}, process.env.myTokenPrivateKey);
+        const token = JWT.sign({email:userExists.email, isAdmin: userExists.isAdmin}, process.env.myTokenPrivateKey, {exports: '1d'});
         return {message : "confirmed", "x-access-token": token};
-    }catch(err){
-        console.log(err);
-    }
 }
 
 userSchema.statics.makeAdmin = async function(email){
-    try {
         const user = await this.model('user').findOne({email: email})
         if(!user) return false;
         user.isAdmin = true;
         await user.save();
         return true;
-    } catch (err) {
-        console.log(err)
-    }
 }
 userSchema.statics.unmakeAdmin = async function(email){
-    try {
         const user = await this.model('user').findOne({email: email})
         if(!user) return false;
         user.isAdmin = false;
         await user.save();
         return true;
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 userSchema.statics.addToCart = async function(foodName, email){
-    try {
         const food = await foodModel.findFood(foodName);
         if(!food) return {success: false, message: "food does not exist"};
         const user = await this.model('user').findOne({email: email})
@@ -110,13 +91,9 @@ userSchema.statics.addToCart = async function(foodName, email){
         user.cart.push({foodId: food._id, quantity: 1})
         await user.save();
         return {success: true, message: "Added to cart" };
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 userSchema.statics.removeFromCart =  async function(foodName, email){
-    try {
         const food = await foodModel.findFood(foodName);
         if(!food) return {success: false, message: "food does not exist"};
         const user = await this.model('user').findOne({email: email})
@@ -135,13 +112,9 @@ userSchema.statics.removeFromCart =  async function(foodName, email){
         }else{
             return {success: false, message: "Item Is not in cart "}
         }
-    }catch(err){
-        console.log(err);
-    }
 }
 
 userSchema.statics.changeQuantity= async function(foodName, quantity, email){
-    try {
         const food = await foodModel.findFood(foodName);
         if(!food) return {success: false, message: "food does not exist"};
         const user = await this.model('user').findOne({email: email})
@@ -166,9 +139,6 @@ userSchema.statics.changeQuantity= async function(foodName, quantity, email){
         }else{
             return {success: false, message: "Item is not in the cart"};
         }
-    } catch (err) {
-        console.log(err);
-    }
 }
 userSchema.statics.viewCart = async function(email){
     const userCart =  await this.model('user')
