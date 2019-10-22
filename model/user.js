@@ -171,9 +171,10 @@ userSchema.statics.changeQuantity= async function(foodName, quantity, email){
     }
 }
 userSchema.statics.viewCart = async function(email){
-    const userCart =  await this.model('user').findOne({email: email})
-                                                                     .populate('menu')
-                                                                     .select("cart");
+    const userCart =  await this.model('user')
+                                                .findOne({email: email})
+                                                .populate('cart[0].foodId')
+    console.log(userCart)
     if(!userCart) return {success: false, message: "User does not exist"};
     if(userCart.length === 0) return {success: true, message: "Your cart is empty"};
     return {success: true, data: userCart};

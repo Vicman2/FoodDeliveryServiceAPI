@@ -1,10 +1,11 @@
 const JWT = require('jsonwebtoken');
+const config = require('../config');
 
 exports.checkUser = (req, res, next)=> {
     try {
         const token = req.headers["x-access-token"];
         if(!token) return res.status(400).send({success: false, message: "No token provided"});
-        const validToken = JWT.verify(token,  process.env.myTokenPrivateKey);
+        const validToken = JWT.verify(token,  config.JWTsecret);
         req.email = validToken.email;
         next();
     } catch (err) {
