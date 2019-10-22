@@ -6,9 +6,11 @@ const app = express();
 require('./startup/logging')()
 require('./startup/routes')(app)
 require('./startup/db')();
+require('./startup/prod')(app);
+
+
 
 const port = config.port
-console.log(config.port)
 app.listen(port, ()=>{
     winston.info(` Listening on port ${port}`);
 })
