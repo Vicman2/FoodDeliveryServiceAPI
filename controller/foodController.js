@@ -1,16 +1,12 @@
 const menuModel = require("../model/menu");
 exports.viewMenu = async (req, res, next)=> {
-    try {
-        const menu = await menuModel.viewMenu();
+        const pageNumber = req.query.page
+        const menu = await menuModel.viewMenu(pageNumber);
         if(!menu) return res.status(404).send({status: true, message: "No food was found in the menu"});
         return res.status(200).send({status: true, data: menu});
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 exports.addFood = async (req, res, next)=>{
-    try {
         const {name, price} = req.body;
         const foodie = new menuModel({
             name: name,
@@ -19,9 +15,6 @@ exports.addFood = async (req, res, next)=>{
         const validFood =await  foodie.addFood();
         if(!validFood)   return res.status(400).send({success: false, message: "Food already exist"})
         res.status(201).send({success: true, message:"Food created successfully"})
-    } catch (err) {
-        console.log(err);
-    }
 }
 
 exports.editPrice = async (req, res, next) => {

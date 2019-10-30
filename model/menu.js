@@ -40,9 +40,13 @@ menuSchema.methods.addFood = async function(){
     }
 }
 
-menuSchema.statics.viewMenu = async function(){
+menuSchema.statics.viewMenu = async function(pageNumber){
+    const numberToReturn = 2
     try{
-        const any = await this.model("menu").find().select("-_id  -__v")
+        const any = await this.model("menu").find()
+                            .skip((pageNumber-1) * numberToReturn)
+                            .limit(numberToReturn) 
+                             .select("-_id  -__v")
         if(any) return any
     }catch(err){
         console.log(err)
